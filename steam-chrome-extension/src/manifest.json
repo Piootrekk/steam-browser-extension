@@ -1,12 +1,24 @@
 {
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
+  "name": "Test",
+  "version": "1.0.0",
+  "description": "Test Vite Plugin Extension",
+
   "{{chrome}}.action": {
     "default_popup": "src/popup.html"
   },
   "{{firefox}}.browser_action": {
     "default_popup": "src/popup.html"
   },
+  "permissions": ["scripting", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://steamcommunity.com/market*"],
+      "js": ["src/popup.ts"],
+      "css": ["src/popup.css"]
+    }
+  ],
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]

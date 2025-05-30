@@ -1,17 +1,34 @@
-const generateButton = (textInside: string) => {
+const hideButton = (list: NodeListOf<Element>) => {
   const button = document.createElement("button");
-  button.textContent = textInside;
+  button.textContent = "<< hide >>";
   button.classList.add("custom-button");
   button.setAttribute("data-hidden", "false");
   button.addEventListener("click", () => {
-    const isHidden = button.getAttribute("data-hidden") === "true";
-    button.setAttribute("data-hidden", (!isHidden).toString());
-    button.textContent = isHidden ? "<< hide >>" : "<< unhide >>";
+    const currentHidden = button.getAttribute("data-hidden") === "true";
+    const isHidden = !currentHidden;
+    button.setAttribute("data-hidden", isHidden.toString());
+    button.textContent = isHidden ? "<< unhide >>" : "<< hide >>";
+    buttonAction(isHidden, list);
   });
   return button;
 };
 
-const buttonAction = () => {};
+const buttonAction = (
+  isHidden: boolean,
+  listingsItems: NodeListOf<Element>
+) => {
+  if (isHidden) {
+    listingsItems.forEach((listing) => {
+      if (listing instanceof HTMLElement === false) return;
+      listing.style.display = "none";
+    });
+  } else {
+    listingsItems.forEach((listing) => {
+      if (listing instanceof HTMLElement === false) return;
+      listing.style.display = "block";
+    });
+  }
+};
 
 const injectButton = (): void => {
   const listingCards = document.querySelectorAll(
@@ -23,9 +40,8 @@ const injectButton = (): void => {
     const listingsItems = card.querySelectorAll(
       ".market_listing_row.market_recent_listing_row"
     );
-
-    if (header === null) throw Error("Header not found");
-    header.appendChild(generateButton("<< hide >>"));
+    if (header === null) return;
+    header.appendChild(hideButton(listingsItems));
   });
 };
 

@@ -1,4 +1,4 @@
-const generatehidingButton = (element: Element) => {
+const generateHidingButton = (element: Element) => {
   const wrapper = document.createElement("div");
   const button = document.createElement("button");
   button.textContent = "<< HIDE >>";
@@ -9,7 +9,7 @@ const generatehidingButton = (element: Element) => {
     button.setAttribute("data-hidden", (!isHidden).toString());
     if (!isHidden) {
       if (element instanceof HTMLElement === false) return;
-      button.textContent = "<< UNHIDE >>";
+      button.textContent = "<< SHOW >>";
       element.style.display = "none";
     } else if (isHidden) {
       if (element instanceof HTMLElement === false) return;
@@ -18,6 +18,8 @@ const generatehidingButton = (element: Element) => {
     }
   });
   wrapper.appendChild(button);
+  button.style.paddingBottom = "20px";
+  button.style.fontSize = "17px";
   return wrapper;
 };
 
@@ -25,11 +27,16 @@ const injectHideButtons = () => {
   const listingsMainContainer = document.querySelector<HTMLElement>(
     "#tabContentsMyListings"
   );
-  if (!listingsMainContainer) throw new Error("Main container not exist");
+  if (!listingsMainContainer) return;
   listingsMainContainer.style.paddingTop = "30px";
-  const childs = Array.from(listingsMainContainer.children);
+
+  const activeListings = listingsMainContainer.querySelectorAll(
+    ".my_listing_section.market_content_block"
+  );
+
+  const childs = Array.from(activeListings);
   childs.forEach((child) => {
-    const button = generatehidingButton(child);
+    const button = generateHidingButton(child);
     listingsMainContainer.insertBefore(button, child);
   });
 };

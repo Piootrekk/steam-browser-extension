@@ -6,21 +6,32 @@
   "description": "Test Vite Plugin Extension",
 
   "{{chrome}}.action": {
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
-  "permissions": ["scripting", "activeTab"],
+  "permissions": ["scripting", "activeTab", "tabs"],
   "content_scripts": [
     {
-      "matches": ["https://steamcommunity.com/market*"],
-      "js": ["src/popup.ts"],
-      "css": ["src/popup.css"]
+      "matches": ["https://steamcommunity.com/*"],
+      "js": ["src/popup/popup.ts"],
+      "css": ["src/popup/popup.css"]
+    },
+    {
+      "matches": ["https://steamcommunity.com/market"],
+      "js": ["src/market/listings.ts", "src/market/history.ts"]
+    },
+    {
+      "matches": [
+        "https://steamcommunity.com/id*/inventory*",
+        "https://steamcommunity.com/profiles*/inventory*"
+      ],
+      "js": ["src/inventory/inventory.ts"]
     }
   ],
   "background": {
-    "{{chrome}}.service_worker": "src/background.ts",
-    "{{firefox}}.scripts": ["src/background.ts"]
+    "{{chrome}}.service_worker": "src/background/background.ts",
+    "{{firefox}}.scripts": ["src/background/background.ts"]
   }
 }

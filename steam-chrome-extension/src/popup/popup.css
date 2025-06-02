@@ -1,4 +1,4 @@
-.custom-button {
+.hidding-button {
   background: none;
   border: none;
   padding: 0;
@@ -9,6 +9,6 @@
   text-decoration: none;
 }
 
-.custom-button:hover {
+.hidding-button:hover {
   text-decoration: underline;
 }

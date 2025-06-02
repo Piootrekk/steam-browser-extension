@@ -19,7 +19,7 @@
       "css": ["src/popup/popup.css"]
     },
     {
-      "matches": ["https://steamcommunity.com/market"],
+      "matches": ["https://steamcommunity.com/market/"],
       "js": ["src/market/listings.ts", "src/market/history.ts"]
     },
     {

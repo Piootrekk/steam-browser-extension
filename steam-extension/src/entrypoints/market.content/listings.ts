@@ -1,5 +1,3 @@
-console.log("hello from listings");
-
 const generateHidingButton = (element: Element) => {
   const wrapper = document.createElement("div");
   const button = document.createElement("button");
@@ -60,4 +58,4 @@ const startHybridInjection = () => {
   startMutationInjection(listingsMainContainer);
 };
 
-startHybridInjection();
+export { startHybridInjection };

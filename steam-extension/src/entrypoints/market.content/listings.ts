@@ -23,11 +23,15 @@ const generateHidingButton = (element: Element) => {
   return wrapper;
 };
 
-const injectHideButtons = (listingsMainContainer: HTMLElement) => {
+const injectHideButtons = (listingsMainContainer: HTMLElement | null) => {
+  if (!listingsMainContainer) return;
+  listingsMainContainer.style.paddingTop = "30px";
   const activeListings = listingsMainContainer.querySelectorAll(
     ".my_listing_section.market_content_block"
   );
-
+  const hiddingButtons =
+    listingsMainContainer.querySelectorAll(".hidding-button");
+  if (hiddingButtons.length !== 0) return;
   const childs = Array.from(activeListings);
   childs.forEach((child) => {
     const button = generateHidingButton(child);
@@ -35,27 +39,4 @@ const injectHideButtons = (listingsMainContainer: HTMLElement) => {
   });
 };
 
-const startMutationInjection = (listingsMainContainer: HTMLElement) => {
-  const observer = new MutationObserver(() => {
-    const hiddingButtons = document.querySelectorAll(".hidding-button");
-    if (hiddingButtons.length !== 0) return;
-    console.log("mutation inject");
-    injectHideButtons(listingsMainContainer);
-  });
-  observer.observe(listingsMainContainer, {
-    childList: true,
-    subtree: true,
-  });
-};
-
-const startHybridInjection = () => {
-  const listingsMainContainer = document.querySelector<HTMLElement>(
-    "#tabContentsMyListings"
-  );
-  if (!listingsMainContainer) return;
-  listingsMainContainer.style.paddingTop = "30px";
-  injectHideButtons(listingsMainContainer);
-  startMutationInjection(listingsMainContainer);
-};
-
-export { startHybridInjection };
+export { injectHideButtons };

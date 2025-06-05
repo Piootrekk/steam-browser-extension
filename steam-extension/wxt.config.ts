@@ -6,6 +6,7 @@ export default defineConfig({
   manifestVersion: 3,
   webExt: {
     startUrls: ["https://steamcommunity.com"],
-    o: true,
+    openConsole: true,
+    openDevtools: true,
   },
 });

@@ -23,7 +23,7 @@ const generateHidingButton = (element: Element) => {
   return wrapper;
 };
 
-const injectHideButtons = (listingsMainContainer: HTMLElement | null) => {
+const appendChangesToListings = (listingsMainContainer: HTMLElement | null) => {
   if (!listingsMainContainer) return;
   listingsMainContainer.style.paddingTop = "30px";
   const activeListings = listingsMainContainer.querySelectorAll(
@@ -39,4 +39,4 @@ const injectHideButtons = (listingsMainContainer: HTMLElement | null) => {
   });
 };
 
-export { injectHideButtons };
+export { appendChangesToListings };

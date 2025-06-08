@@ -1,4 +1,5 @@
-import { injectHideButtons } from "./listings";
+import { appendChangesToHistory } from "./history";
+import { appendChangesToListings } from "./listings";
 import "@/styles/style.css";
 
 type VisibleElement = "listings" | "history";
@@ -21,27 +22,26 @@ export default defineContentScript({
     const mutationExecute = (
       tab: HTMLElement | null,
       visibleTab: VisibleElement,
-      action: () => void
+      callback: () => void
     ) => {
       const isVisible = tab && getComputedStyle(tab).display === "block";
       if (isVisible && lastVisibleTab !== visibleTab) {
-        action();
+        callback();
         lastVisibleTab = visibleTab;
       }
     };
 
     const initValus = getTabContents();
-    if (initValus.listings) injectHideButtons(initValus.listings);
+    if (initValus.listings) appendChangesToListings(initValus.listings);
 
     const observer = new MutationObserver(() => {
       const { listings, history } = getTabContents();
-
       mutationExecute(listings, "listings", () => {
-        if (listings) injectHideButtons(listings);
+        appendChangesToListings(listings);
       });
 
-      mutationExecute(history, "history", () => {
-        console.log("history");
+      mutationExecute(history, "history", async () => {
+        await appendChangesToHistory(history);
       });
     });
 

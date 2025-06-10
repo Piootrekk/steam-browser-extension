@@ -1,26 +1,4 @@
-type InterceptEnpoint = {
-  message: string;
-  endpoint: string;
-};
-
-const intercepts = [
-  {
-    message: "my-history-fetch",
-    endpoint: "/market/myhistory",
-  },
-] satisfies InterceptEnpoint[];
-
-const sendInterceptMessage = (message: string, url: string, body: string) => {
-  browser.runtime.sendMessage({
-    message,
-    url,
-    body,
-  });
-};
-
-const matchIntercept = (url: string) => {
-  return intercepts.find(({ endpoint }) => url.includes(endpoint));
-};
+import { matchIntercept, sendInterceptMessage } from "./intercept.utils";
 
 export default defineUnlistedScript(() => {
   const originalFetch = window.fetch;
@@ -32,8 +10,8 @@ export default defineUnlistedScript(() => {
     if (match && response.status === 200) {
       const cloned = response.clone();
       const body = await cloned.text();
-      console.log("[Intercepted fetch]", args[0], body);
-      sendInterceptMessage(match.message, url, body);
+      console.log("[Intercepted fetch]", url, body);
+      sendInterceptMessage("FETCH_HISTORY", url, body);
     }
     return response;
   };
@@ -46,7 +24,7 @@ export default defineUnlistedScript(() => {
       if (match && this.status === 200) {
         console.log("[Intercepted XHR]", this.responseURL, this.responseText);
         sendInterceptMessage(
-          match.message,
+          "FETCH_HISTORY",
           this.responseURL,
           this.responseText
         );

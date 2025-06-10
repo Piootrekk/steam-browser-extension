@@ -8,7 +8,7 @@ export default defineConfig({
     permissions: ["webRequest", "webRequestBlocking", "<all_urls>"],
     web_accessible_resources: [
       {
-        resources: ["script-inject.js"],
+        resources: ["intercept.js"],
         matches: ["<all_urls>"],
       },
     ],

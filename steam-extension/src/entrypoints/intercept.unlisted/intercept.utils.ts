@@ -1,4 +1,4 @@
-import { InterceptEnpoint } from "./intercept.types";
+import { InterceptEnpoint, RawResponse } from "./intercept.types";
 
 const intercepts = [
   {
@@ -7,7 +7,11 @@ const intercepts = [
   },
 ] satisfies InterceptEnpoint[];
 
-const sendInterceptMessage = (message: string, url: string, body: string) => {
+const sendInterceptMessage = <T = unknown>(
+  message: string,
+  url: string,
+  body: T
+) => {
   const event = new CustomEvent(message, {
     detail: {
       body,

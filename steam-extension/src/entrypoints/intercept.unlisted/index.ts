@@ -1,3 +1,5 @@
+import { sanitizeItemToMsg } from "./fetch.utils";
+import { RawResponse } from "./intercept.types";
 import { matchIntercept, sendInterceptMessage } from "./intercept.utils";
 
 export default defineUnlistedScript(() => {
@@ -9,9 +11,10 @@ export default defineUnlistedScript(() => {
 
     if (match && response.status === 200) {
       const cloned = response.clone();
-      const body = await cloned.text();
-      console.log("[Intercepted fetch]", url, body);
-      sendInterceptMessage("FETCH_HISTORY", url, body);
+      const body: RawResponse = await cloned.json();
+      const message = sanitizeItemToMsg(body);
+      console.log("[Intercepted fetch]", url, message);
+      sendInterceptMessage("FETCH_HISTORY", url, message);
     }
     return response;
   };
@@ -22,12 +25,10 @@ export default defineUnlistedScript(() => {
     xhr.addEventListener("load", function () {
       const match = matchIntercept(this.responseURL);
       if (match && this.status === 200) {
-        console.log("[Intercepted XHR]", this.responseURL, this.responseText);
-        sendInterceptMessage(
-          "FETCH_HISTORY",
-          this.responseURL,
-          this.responseText
-        );
+        const response: RawResponse = JSON.parse(this.response);
+        const message = sanitizeItemToMsg(response);
+        console.log("[Intercepted XHR]", this.responseURL, message);
+        sendInterceptMessage("FETCH_HISTORY", this.responseURL, message);
       }
     });
     return xhr;

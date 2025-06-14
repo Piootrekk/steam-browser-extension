@@ -13,12 +13,9 @@ const sendInterceptMessage = <T = unknown>(
   body: T
 ) => {
   const event = new CustomEvent(message, {
-    detail: {
-      body,
-      url,
-    },
+    detail: body,
   });
-  window.dispatchEvent(event);
+  document.dispatchEvent(event);
 };
 
 const matchIntercept = (url: string) => {

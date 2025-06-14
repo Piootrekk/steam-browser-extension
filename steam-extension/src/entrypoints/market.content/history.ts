@@ -1,69 +1,40 @@
-const gameMap = new Map([
-  ["Team Fortress 2", 440],
-  ["Counter-Strike 2", 300],
-  ["Rust", 200],
-  ["Dota 2", 570],
-  ["Don't Starve Together", 322330],
-  ["Unturned", 304930],
-  ["Banana", 2923300],
-  ["Bongo Cat", 3419430],
-]);
+import { MessageResponse } from "../intercept.unlisted/intercept.types";
 
 const searchUrls = {
   relative: "https://steamcommunity.com/market/listings/",
   search: "https://steamcommunity.com/market/search?",
 };
 
-const setUrlToItem = (
-  itemLink: string,
-  anchorDOMElement: HTMLElement,
-  childDOMElements: HTMLElement[]
-) => {
+const setUrlToItem = (itemLink: string, anchorDOMElement: HTMLElement) => {
   const linkElement = document.createElement("a");
   linkElement.target = "_blank";
   linkElement.href = itemLink;
-  linkElement.rel;
-  childDOMElements.forEach((childElement) => {
-    linkElement.appendChild(childElement);
-  });
+  const text = anchorDOMElement.textContent || "";
+  linkElement.text = text;
+  anchorDOMElement.textContent = "";
   anchorDOMElement.appendChild(linkElement);
 };
 
-const setupLink = (itemName: string, game: string) => {
-  const gameId = gameMap.get("game");
-  const itemLink = gameId
-    ? `${searchUrls.relative}${gameId}/${itemName}`
-    : `${searchUrls.search}q=${itemName}`;
-  return itemLink;
+const fetchHistoryHandler = (e: Event, historyElement: HTMLElement) => {
+  const customEvent = e as CustomEvent<MessageResponse[]>;
+  customEvent.detail.forEach((det) => {
+    const url = `${searchUrls.relative}/${det.appid}/${det.market_hash_name}`;
+    const spanElement = historyElement.querySelector<HTMLElement>(
+      `#${det.row_history}`
+    );
+    if (!spanElement) return;
+    setUrlToItem(url, spanElement);
+  });
 };
 
 const appendChangesToHistory = async (historyElement: HTMLElement | null) => {
   if (!historyElement) return;
-  const observer = new MutationObserver(async () => {
-    const tableContent = historyElement.querySelector(
-      "#tabContentsMyMarketHistoryRows"
-    );
-    if (!tableContent) {
-      console.log("tableContainer not landed sad");
-      return;
-    }
-    const itemsListings = tableContent.querySelectorAll(
-      ".market_listing_row.market_recent_listing_row"
-    );
-    itemsListings.forEach(async (item) => {
-      const itemName = item.querySelector<HTMLSpanElement>(
-        ".market_listing_item_name.economy_item_hoverable"
-      );
-      const gameName = item.querySelector<HTMLSpanElement>(
-        ".market_listing_game_name"
-      );
-    });
-  });
-
-  observer.observe(historyElement, {
-    childList: true,
-    subtree: true,
-  });
+  document.removeEventListener("FETCH_HISTORY", (e) =>
+    fetchHistoryHandler(e, historyElement)
+  );
+  document.addEventListener("FETCH_HISTORY", (e) =>
+    fetchHistoryHandler(e, historyElement)
+  );
 };
 
 export { appendChangesToHistory };

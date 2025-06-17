@@ -1,5 +1,5 @@
 import { appendChangesToHistory } from "./history";
-import { appendChangesToListings } from "./listings";
+import { appendChangesToListings } from "./listings/listings";
 import "@/styles/style.css";
 
 type VisibleElement = "listings" | "history";

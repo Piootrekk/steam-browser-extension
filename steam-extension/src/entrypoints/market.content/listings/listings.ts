@@ -1,4 +1,8 @@
-import { getSumActiveOrders, getSumBuyOrders } from "./items-calculation";
+import {
+  getAllSumsListings,
+  getGlobalBalance,
+  getSumListings,
+} from "./items-calculation";
 
 const generateHidingButton = (element: HTMLElement) => {
   const divWrapper = document.createElement("div");
@@ -27,46 +31,49 @@ const generateHidingButton = (element: HTMLElement) => {
   return divWrapper;
 };
 
-const getMyOrdersSum = () => {
-  const note =
-    "Total listed price: NaNzł You will receive: 27,56zł (on this page) My buy orders (767)";
+const isHideButtonExist = (listingsMainContainer: HTMLElement): boolean => {
+  const hiddingButtons =
+    listingsMainContainer.querySelectorAll(".hidding-button");
+  return hiddingButtons.length !== 0 ? true : false;
 };
 
-const getBuyOrderSum = () => {
-  const note =
-    "Orders placed total value: NaNzł Max allowed by current balance: 0,00zł You can set more orders totaling: NaNzł";
+const getBuyOrderNotification = (listingsMainContainer: HTMLElement) => {
+  const buyOrdersPrice = getSumBuyOrders(listingsMainContainer);
+  const globalBalance = getGlobalBalance();
+  const diff = globalBalance * 10 - buyOrdersPrice;
+  const note = `Orders placed total value: ${buyOrdersPrice.toFixed(2)}, ${
+    diff > 0
+      ? `can place ${diff.toFixed(2)} more.`
+      : `cannot place more, not enought money.`
+  }`;
+  return spawnSumNotification(note);
 };
 
-const spawnSumNotification = () => {
+const spawnSumNotification = (notification: string) => {
   const divElement = document.createElement("div");
-  divElement.textContent =
-    "Total listed price: NaNzł You will receive: 27,56zł (on this page) My buy orders (767";
+  divElement.textContent = notification;
   return divElement;
 };
 
 const injectButtonsForContent = (listingsMainContainer: HTMLElement) => {
   listingsMainContainer.style.paddingTop = "30px";
   listingsMainContainer.style.paddingBottom = "0px";
+  if (isHideButtonExist(listingsMainContainer)) return;
   const activeListings = listingsMainContainer.querySelectorAll<HTMLElement>(
     ".my_listing_section.market_content_block"
   );
-  const hiddingButtons =
-    listingsMainContainer.querySelectorAll(".hidding-button");
-  if (hiddingButtons.length !== 0) return;
-  const childs = Array.from(activeListings);
-  childs.forEach((child) => {
-    const button = generateHidingButton(child);
-    const sumInfo = spawnSumNotification();
-    listingsMainContainer.insertBefore(button, child);
-    listingsMainContainer.insertBefore(sumInfo, child);
+
+  const activeListingsChilds = Array.from(activeListings);
+  activeListingsChilds.forEach((listing) => {
+    const button = generateHidingButton(listing);
+    listingsMainContainer.insertBefore(button, listing);
   });
 };
 
 const appendChangesToListings = (listingsMainContainer: HTMLElement | null) => {
   if (!listingsMainContainer) return;
   injectButtonsForContent(listingsMainContainer);
-  getSumActiveOrders(listingsMainContainer);
-  getSumBuyOrders(listingsMainContainer);
+  getAllSumsListings(listingsMainContainer);
 };
 
 export { appendChangesToListings };

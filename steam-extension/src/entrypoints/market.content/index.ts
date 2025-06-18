@@ -1,4 +1,4 @@
-import { appendChangesToHistory } from "./history";
+import { appendChangesToHistory } from "./history/history";
 import { appendChangesToListings } from "./listings/listings";
 import "@/styles/style.css";
 

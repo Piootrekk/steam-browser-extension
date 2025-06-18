@@ -1,4 +1,4 @@
-import { MessageResponse } from "../intercept.unlisted/intercept.types";
+import { MessageResponse } from "../../intercept.unlisted/intercept.types";
 
 const searchUrls = {
   relative: "https://steamcommunity.com/market/listings/",
@@ -11,6 +11,7 @@ const setUrlToItem = (itemLink: string, anchorDOMElement: HTMLElement) => {
   linkElement.href = itemLink;
   const text = anchorDOMElement.textContent || "";
   linkElement.text = text;
+  linkElement.classList = "extension-added a-history";
   anchorDOMElement.textContent = "";
   anchorDOMElement.appendChild(linkElement);
 };

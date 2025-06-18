@@ -9,6 +9,11 @@ const parseValueToNumber = (price: string | null | undefined): number => {
   return parsedPrice;
 };
 
+const getCurrencyFromPrice = (price: string | null | undefined) => {
+  if (!price) return "";
+  return price.trim().replace(/^[\d\s,.]+/, "");
+};
+
 const getListings = (listing: HTMLElement) => {
   const price = {
     setPrice: 0,
@@ -29,8 +34,8 @@ const getListings = (listing: HTMLElement) => {
       price.setPrice += setPrice;
       price.finalPrice += finalPrice;
     });
+    return price;
   }
-  return price;
 };
 
 const getBuyOrders = (listing: HTMLElement) => {
@@ -49,29 +54,88 @@ const getBuyOrders = (listing: HTMLElement) => {
       const qty = parseValueToNumber(qtyElement?.textContent);
       totalPrice += price * qty;
     });
+    return { totalPrice };
   }
-  return totalPrice;
-};
-
-const getAllSumsListings = (listingsContainer: HTMLElement) => {
-  const activeListings = listingsContainer.querySelectorAll<HTMLElement>(
-    ".my_listing_section.market_content_block"
-  );
-  const activeListingsChilds = Array.from(activeListings);
-
-  activeListingsChilds.forEach((listing) => {
-    getListings(listing);
-    getBuyOrders(listing);
-    console.log("-----=-----");
-  });
 };
 
 const getGlobalBalance = () => {
   const aBalanceElement = document.querySelector<HTMLAnchorElement>(
     "a#header_wallet_balance"
   );
+  if (!aBalanceElement) return null;
   const balance = parseValueToNumber(aBalanceElement?.textContent);
-  return balance;
+  const currency = getCurrencyFromPrice(aBalanceElement?.textContent);
+  return { balance, currency };
 };
 
-export { getGlobalBalance, getAllSumsListings };
+const getBuyOrderNotification = (
+  buyOrdersPrice: number,
+  globalBalance: number,
+  currency: string
+) => {
+  const diff = globalBalance * 10 - buyOrdersPrice;
+  const note = `Orders placed total value: ${buyOrdersPrice.toFixed(
+    2
+  )} ${currency}, ${
+    diff > 0
+      ? `can place ${diff.toFixed(2)} ${currency} more.`
+      : `cannot place more, not enought money.`
+  }`;
+  return note;
+};
+
+const getListingNotification = (
+  setPrice: number,
+  finalPrice: number,
+  currency: string
+) => {
+  const note = `Total listed price: ${setPrice} ${currency} You will receive: ${finalPrice} ${currency} (on this page)`;
+  return note;
+};
+
+const spawnSumNotificationDiv = (notification: string) => {
+  const divElement = document.createElement("div");
+  divElement.classList = "extension-added notification-sum";
+  divElement.textContent = notification;
+  return divElement;
+};
+
+const isSummaryExist = (listingsMainContainer: HTMLElement): boolean => {
+  const hiddingButtons = listingsMainContainer.querySelectorAll(
+    ".extension-added.notification-sum"
+  );
+  return hiddingButtons.length !== 0 ? true : false;
+};
+
+const injectSummary = (listingsContainer: HTMLElement) => {
+  const activeListings = listingsContainer.querySelectorAll<HTMLElement>(
+    ".my_listing_section.market_content_block"
+  );
+  const globalBalance = getGlobalBalance();
+  if (!globalBalance) return;
+  activeListings.forEach((listing) => {
+    const priceListings = getListings(listing);
+    if (priceListings) {
+      const notification = getListingNotification(
+        priceListings.setPrice,
+        priceListings.finalPrice,
+        globalBalance.currency
+      );
+      const notifDiv = spawnSumNotificationDiv(notification);
+      listingsContainer.insertBefore(notifDiv, listing);
+    }
+    const priceBuyOrders = getBuyOrders(listing);
+    if (priceBuyOrders) {
+      const notification = getBuyOrderNotification(
+        priceBuyOrders.totalPrice,
+        globalBalance.balance,
+        globalBalance.currency
+      );
+      const notifDiv = spawnSumNotificationDiv(notification);
+      listingsContainer.insertBefore(notifDiv, listing);
+    }
+    console.log("-----=-----");
+  });
+};
+
+export { injectSummary, isSummaryExist };

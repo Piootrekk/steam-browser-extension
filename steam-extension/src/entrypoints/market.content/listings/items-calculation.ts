@@ -6,12 +6,18 @@ const parseValueToNumber = (price: string | null | undefined): number => {
     .replace(/[^\d.,]/g, "")
     .replace(",", ".");
   const parsedPrice = parseFloat(cleaned);
-  return parsedPrice;
+  return isNaN(parsedPrice) ? 0 : parsedPrice;
 };
 
 const getCurrencyFromPrice = (price: string | null | undefined) => {
   if (!price) return "";
   return price.trim().replace(/^[\d\s,.]+/, "");
+};
+
+const getAmountFromName = (itemName: string | null | undefined) => {
+  if (!itemName) return null;
+  const match = itemName.match(/^(\d+)\s+\S+/);
+  return match ? parseInt(match[1], 10) : null;
 };
 
 const getListings = (listing: HTMLElement) => {
@@ -24,43 +30,53 @@ const getListings = (listing: HTMLElement) => {
   );
   if (itemRows.length > 0) {
     itemRows.forEach((item) => {
-      const itemValues = item.querySelector<HTMLElement>(
+      const itemValueElements = item.querySelector<HTMLElement>(
         "span.market_listing_price"
       );
-      const setPriceElement = itemValues?.firstElementChild?.firstElementChild;
-      const finalPriceElement = itemValues?.firstElementChild?.lastElementChild;
+
+      const itemNameElement = item.querySelector<HTMLElement>(
+        "a.market_listing_item_name_link"
+      );
+      const itemAmount = getAmountFromName(itemNameElement?.textContent);
+      const multipler = itemAmount ? itemAmount : 1;
+
+      const setPriceElement =
+        itemValueElements?.firstElementChild?.firstElementChild;
+      const finalPriceElement =
+        itemValueElements?.firstElementChild?.lastElementChild;
       const setPrice = parseValueToNumber(setPriceElement?.textContent);
       const finalPrice = parseValueToNumber(finalPriceElement?.textContent);
-      price.setPrice += setPrice;
-      price.finalPrice += finalPrice;
+      price.setPrice += multipler * setPrice;
+      price.finalPrice += multipler * finalPrice;
     });
     return price;
   }
 };
 
-const getBuyOrders = (listing: HTMLElement) => {
+const getBuyOrdersPrice = (listing: HTMLElement) => {
   const itemRows = listing.querySelectorAll<HTMLElement>(
     'div[id^="mybuyorder_"]'
   );
-  let totalPrice = 0;
-  if (itemRows.length > 0) {
-    itemRows.forEach((item) => {
-      const valuesSpan = item.querySelector<HTMLSpanElement>(
-        "div.market_listing_right_cell.market_listing_my_price span.market_listing_price"
-      );
-      const priceElement = valuesSpan?.lastChild;
-      const qtyElement = valuesSpan?.firstElementChild;
-      const price = parseValueToNumber(priceElement?.textContent);
-      const qty = parseValueToNumber(qtyElement?.textContent);
-      totalPrice += price * qty;
-    });
-    return { totalPrice };
-  }
+
+  if (itemRows.length === 0) return;
+
+  const totalPrice = Array.from(itemRows).reduce((sum, item) => {
+    const valuesSpan = item.querySelector<HTMLSpanElement>(
+      "div.market_listing_right_cell.market_listing_my_price span.market_listing_price"
+    );
+    const priceElement = valuesSpan?.lastChild;
+    const qtyElement = valuesSpan?.firstElementChild;
+    const price = parseValueToNumber(priceElement?.textContent);
+    const qty = parseValueToNumber(qtyElement?.textContent);
+    return sum + price * qty;
+  }, 0);
+
+  return { totalPrice };
 };
 
 const getGlobalBalance = () => {
   const aBalanceElement = document.querySelector<HTMLAnchorElement>(
-    "a#header_wallet_balance"
+    "span#marketWalletBalanceAmount"
   );
   if (!aBalanceElement) return null;
   const balance = parseValueToNumber(aBalanceElement?.textContent);
@@ -78,8 +94,8 @@ const getBuyOrderNotification = (
     2
   )} ${currency}, ${
     diff > 0
-      ? `can place ${diff.toFixed(2)} ${currency} more.`
-      : `cannot place more, not enought money.`
+      ? `can place ${diff.toFixed(2)}${currency} more.`
+      : `Cannot place more, not enought money.`
   }`;
   return note;
 };
@@ -89,7 +105,11 @@ const getListingNotification = (
   finalPrice: number,
   currency: string
 ) => {
-  const note = `Total listed price: ${setPrice} ${currency} You will receive: ${finalPrice} ${currency} (on this page)`;
+  const note = `Total listed price: ${setPrice.toFixed(
+    2
+  )}${currency} You will receive: ${finalPrice.toFixed(
+    2
+  )}${currency} (on this page)`;
   return note;
 };
 
@@ -124,7 +144,7 @@ const injectSummary = (listingsContainer: HTMLElement) => {
       const notifDiv = spawnSumNotificationDiv(notification);
       listingsContainer.insertBefore(notifDiv, listing);
     }
-    const priceBuyOrders = getBuyOrders(listing);
+    const priceBuyOrders = getBuyOrdersPrice(listing);
     if (priceBuyOrders) {
       const notification = getBuyOrderNotification(
         priceBuyOrders.totalPrice,
@@ -138,4 +158,5 @@ const injectSummary = (listingsContainer: HTMLElement) => {
   });
 };
 
+export { getAmountFromName, getCurrencyFromPrice, parseValueToNumber };
 export { injectSummary, isSummaryExist };

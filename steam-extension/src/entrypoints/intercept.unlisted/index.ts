@@ -13,7 +13,7 @@ export default defineUnlistedScript(() => {
       const cloned = response.clone();
       const body: RawResponse = await cloned.json();
       const message = sanitizeItemToMsg(body);
-      sendInterceptMessage("FETCH_HISTORY", url, message);
+      sendInterceptMessage("FETCH_HISTORY", message);
     }
     return response;
   };
@@ -26,7 +26,8 @@ export default defineUnlistedScript(() => {
       if (match && this.status === 200) {
         const response: RawResponse = JSON.parse(this.response);
         const message = sanitizeItemToMsg(response);
-        sendInterceptMessage("FETCH_HISTORY", this.responseURL, message);
+        console.log(message);
+        sendInterceptMessage("FETCH_HISTORY", message);
       }
     });
     return xhr;

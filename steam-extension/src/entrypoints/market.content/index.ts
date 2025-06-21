@@ -1,6 +1,6 @@
 import { appendChangesToHistory } from "./history/history";
 import { appendChangesToListings } from "./listings/listings";
-import "@/styles/style.css";
+import "./style.css";
 
 type VisibleElement = "listings" | "history";
 
@@ -51,4 +51,5 @@ export default defineContentScript({
       attributes: true,
     });
   },
+  cssInjectionMode: "manifest",
 });

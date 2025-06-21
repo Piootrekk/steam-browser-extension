@@ -29,7 +29,7 @@ const getHoverDetails = (hover: string): HoverDetailsRow[] => {
   const matches = [...hover.matchAll(regex)];
 
   return matches.map(([, historyRow, gameId, itemId]) => ({
-    historyRow: historyRow.replace("_image", "_name"),
+    itemNameRow: historyRow.replace("_image", ""),
     gameId,
     itemId,
   }));
@@ -41,10 +41,10 @@ const getMappedItems = (
 ): MessageResponse[] => {
   const mappedItems = items.map((item) => {
     return {
-      market_hash_name: item.market_hash_name,
+      hashName: item.market_hash_name,
       id: item.id,
       appid: item.appid,
-      row_history: ids.find((id) => id.itemId === item.id)?.historyRow,
+      itemNameRow: ids.find((id) => id.itemId === item.id)?.itemNameRow,
     } satisfies MessageResponse;
   });
   return mappedItems;

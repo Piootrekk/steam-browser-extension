@@ -35,6 +35,10 @@ describe("Value parser to first number (getAmountFromName)", () => {
       expected: null,
     },
     {
+      input: null,
+      expected: null,
+    },
+    {
       input: "12 Glacial Visage Sleeping Bag",
       expected: 12,
     },

@@ -6,12 +6,12 @@ type InterceptEnpoint = {
 type MessageResponse = {
   appid: number;
   id: string;
-  market_hash_name: string;
-  row_history: string | undefined;
+  hashName: string;
+  itemNameRow: string | undefined;
 };
 
 type HoverDetailsRow = {
-  historyRow: string;
+  itemNameRow: string;
   gameId: string;
   itemId: string;
 };

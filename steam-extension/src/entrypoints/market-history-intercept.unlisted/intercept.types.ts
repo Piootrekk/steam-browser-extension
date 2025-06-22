@@ -1,8 +1,3 @@
-type InterceptEnpoint = {
-  message: string;
-  endpoint: string;
-};
-
 type MessageResponse = {
   appid: number;
   id: string;
@@ -55,7 +50,6 @@ type ItemData = {
 };
 
 export type {
-  InterceptEnpoint,
   RawResponse,
   MessageResponse,
   ApiType,

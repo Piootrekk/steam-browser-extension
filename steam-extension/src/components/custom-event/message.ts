@@ -1,11 +1,4 @@
-import { InterceptEnpoint } from "./intercept.types";
-
-const intercepts = [
-  {
-    message: "my-history-fetch",
-    endpoint: "/market/myhistory",
-  },
-] satisfies InterceptEnpoint[];
+import { globalIntercepts } from "./intercept.data";
 
 const sendInterceptMessage = <T = unknown>(message: string, body: T) => {
   const event = new CustomEvent(message, {
@@ -15,7 +8,7 @@ const sendInterceptMessage = <T = unknown>(message: string, body: T) => {
 };
 
 const matchIntercept = (url: string) => {
-  return intercepts.find(({ endpoint }) => url.includes(endpoint));
+  return globalIntercepts.find(({ endpoint }) => url.includes(endpoint));
 };
 
 export { sendInterceptMessage, matchIntercept };

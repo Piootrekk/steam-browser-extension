@@ -1,8 +1,6 @@
-import { sanitizeItemToMsg } from "./fetch.utils";
-import { RawResponse } from "./intercept.types";
-import { matchIntercept, sendInterceptMessage } from "./intercept.utils";
+import { matchIntercept } from "./message";
 
-export default defineUnlistedScript(() => {
+const interceptNetworkRequests = (onIntercept: (response: string) => void) => {
   const originalFetch = window.fetch;
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);
@@ -10,10 +8,8 @@ export default defineUnlistedScript(() => {
     const match = matchIntercept(url);
 
     if (match && response.status === 200) {
-      const cloned = response.clone();
-      const body: RawResponse = await cloned.json();
-      const message = sanitizeItemToMsg(body);
-      sendInterceptMessage("FETCH_HISTORY", message);
+      const cloneResponse = await response.clone().text();
+      onIntercept(cloneResponse);
     }
     return response;
   };
@@ -24,13 +20,13 @@ export default defineUnlistedScript(() => {
     xhr.addEventListener("load", function () {
       const match = matchIntercept(this.responseURL);
       if (match && this.status === 200) {
-        const response: RawResponse = JSON.parse(this.response);
-        const message = sanitizeItemToMsg(response);
-        console.log(message);
-        sendInterceptMessage("FETCH_HISTORY", message);
+        const cloneResponse = this.response;
+        onIntercept(cloneResponse);
       }
     });
     return xhr;
   }
   window.XMLHttpRequest = newXHR as unknown as typeof XMLHttpRequest;
-});
+};
+
+export { interceptNetworkRequests };

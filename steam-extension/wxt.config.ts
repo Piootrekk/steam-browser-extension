@@ -8,7 +8,7 @@ export default defineConfig({
     permissions: ["webRequest", "webRequestBlocking", "<all_urls>"],
     web_accessible_resources: [
       {
-        resources: ["intercept.js"],
+        resources: ["market-history-intercept.js"],
         matches: ["<all_urls>"],
       },
     ],

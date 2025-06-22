@@ -1,4 +1,4 @@
-import { MessageResponse } from "../../intercept.unlisted/intercept.types";
+import { MessageResponse } from "../../market-history-intercept.unlisted/intercept.types";
 
 const searchUrls = {
   relative: "https://steamcommunity.com/market/listings",
@@ -24,12 +24,12 @@ const setColorToAction = (actionContainer: HTMLElement | null) => {
   if (!actionContainer) return;
   if (actionContainer.textContent?.trim() === "+")
     actionContainer.parentElement?.classList.add(
-      "extension-added",
+      "extension-edited",
       "history-action-purchase"
     );
   if (actionContainer.textContent?.trim() === "-")
     actionContainer.parentElement?.classList.add(
-      "extension-added",
+      "extension-edited",
       "history-action-sale"
     );
 };

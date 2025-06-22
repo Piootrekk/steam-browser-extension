@@ -154,7 +154,6 @@ const injectSummary = (listingsContainer: HTMLElement) => {
       const notifDiv = spawnSumNotificationDiv(notification);
       listingsContainer.insertBefore(notifDiv, listing);
     }
-    console.log("-----=-----");
   });
 };
 

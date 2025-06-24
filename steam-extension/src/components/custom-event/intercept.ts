@@ -1,11 +1,19 @@
+import { InterceptNetworkRequestsParams } from "./intercept.types";
 import { matchIntercept } from "./message";
 
-const interceptNetworkRequests = (onIntercept: (response: string) => void) => {
+const interceptNetworkRequests = ({
+  onIntercept,
+  url,
+}: InterceptNetworkRequestsParams) => {
   const originalFetch = window.fetch;
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);
-    const url = args[0].toString();
-    const match = matchIntercept(url);
+    const basicUrl = args[0].toString();
+    const match = matchIntercept(basicUrl);
+
+    if (match && url) {
+      args[0] = url;
+    }
 
     if (match && response.status === 200) {
       const cloneResponse = await response.clone().text();
@@ -17,6 +25,24 @@ const interceptNetworkRequests = (onIntercept: (response: string) => void) => {
   const originalXHR = window.XMLHttpRequest;
   function newXHR() {
     const xhr = new originalXHR();
+    const originalOpen = xhr.open;
+    xhr.open = function (
+      method: string,
+      url: string | URL,
+      async?: boolean,
+      user?: string,
+      password?: string
+    ) {
+      const originalUrl = url.toString();
+      const match = matchIntercept(originalUrl);
+
+      let finalUrl = originalUrl;
+      if (match) {
+        finalUrl = url.toString();
+      }
+
+      return originalOpen.call(this, method, finalUrl, async!, user, password);
+    };
     xhr.addEventListener("load", function () {
       const match = matchIntercept(this.responseURL);
       if (match && this.status === 200) {

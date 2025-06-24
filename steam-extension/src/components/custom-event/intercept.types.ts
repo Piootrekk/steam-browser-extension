@@ -3,4 +3,10 @@ type InterceptEnpoint = {
   endpoint: string;
 };
 
-export type { InterceptEnpoint };
+type InterceptNetworkRequestsParams = {
+  onIntercept: (response: string) => void;
+  url?: string;
+  body?: Record<string, string>;
+};
+
+export type { InterceptEnpoint, InterceptNetworkRequestsParams };

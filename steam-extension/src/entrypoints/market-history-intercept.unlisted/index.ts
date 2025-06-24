@@ -9,5 +9,5 @@ export default defineUnlistedScript(() => {
     const eventData = sanitizeItemToMsg(body);
     sendInterceptMessage("FETCH_HISTORY", eventData);
   };
-  interceptNetworkRequests(interceptMarketHistoryFetch);
+  interceptNetworkRequests({ onIntercept: interceptMarketHistoryFetch });
 });

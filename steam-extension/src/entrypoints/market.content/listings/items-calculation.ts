@@ -25,9 +25,7 @@ const getListings = (listing: HTMLElement) => {
     setPrice: 0,
     finalPrice: 0,
   };
-  const itemRows = listing.querySelectorAll<HTMLElement>(
-    'div[id^="mylisting_"]'
-  );
+  const itemRows = getMyListingsDiv(listing);
   if (itemRows.length > 0) {
     itemRows.forEach((item) => {
       const itemValueElements = item.querySelector<HTMLElement>(
@@ -53,11 +51,16 @@ const getListings = (listing: HTMLElement) => {
   }
 };
 
-const getBuyOrdersPrice = (listing: HTMLElement) => {
-  const itemRows = listing.querySelectorAll<HTMLElement>(
-    'div[id^="mybuyorder_"]'
-  );
+const getMyListingsDiv = (listing: HTMLElement) => {
+  return listing.querySelectorAll<HTMLElement>('div[id^="mylisting_"]');
+};
 
+const getBuyOrdersDivs = (listing: HTMLElement) => {
+  return listing.querySelectorAll<HTMLElement>('div[id^="mybuyorder_"]');
+};
+
+const getBuyOrdersPrice = (listing: HTMLElement) => {
+  const itemRows = getBuyOrdersDivs(listing);
   if (itemRows.length === 0) return;
 
   const totalPrice = Array.from(itemRows).reduce((sum, item) => {
@@ -90,14 +93,15 @@ const getBuyOrderNotification = (
   currency: string
 ) => {
   const diff = globalBalance * 10 - buyOrdersPrice;
+  const color = diff > 0 ? "rgba(0, 255, 0, 0.3)" : "rgba(255, 0, 0, 0.3)";
   const note = `Orders placed total value: ${buyOrdersPrice.toFixed(
     2
   )} ${currency}, ${
     diff > 0
       ? `can place ${diff.toFixed(2)}${currency} more.`
-      : `Cannot place more, not enought money.`
+      : `Cannot place more, not enought money. Diff: ${diff}`
   }`;
-  return note;
+  return { note, color };
 };
 
 const getListingNotification = (
@@ -113,18 +117,20 @@ const getListingNotification = (
   return note;
 };
 
-const spawnSumNotificationDiv = (notification: string) => {
+const spawnSumNotificationDiv = (notification: string, color?: string) => {
   const divElement = document.createElement("div");
   divElement.classList = "extension-added notification-sum";
   divElement.textContent = notification;
+  divElement.style.paddingBottom = "20px";
+  if (color) divElement.style.color = color;
   return divElement;
 };
 
 const isSummaryExist = (listingsMainContainer: HTMLElement): boolean => {
-  const hiddingButtons = listingsMainContainer.querySelectorAll(
+  const sumamryElements = listingsMainContainer.querySelectorAll(
     ".extension-added.notification-sum"
   );
-  return hiddingButtons.length !== 0 ? true : false;
+  return sumamryElements.length !== 0 ? true : false;
 };
 
 const injectSummary = (listingsContainer: HTMLElement) => {
@@ -136,22 +142,22 @@ const injectSummary = (listingsContainer: HTMLElement) => {
   activeListings.forEach((listing) => {
     const priceListings = getListings(listing);
     if (priceListings) {
-      const notification = getListingNotification(
+      const note = getListingNotification(
         priceListings.setPrice,
         priceListings.finalPrice,
         globalBalance.currency
       );
-      const notifDiv = spawnSumNotificationDiv(notification);
+      const notifDiv = spawnSumNotificationDiv(note);
       listingsContainer.insertBefore(notifDiv, listing);
     }
     const priceBuyOrders = getBuyOrdersPrice(listing);
     if (priceBuyOrders) {
-      const notification = getBuyOrderNotification(
+      const { note, color } = getBuyOrderNotification(
         priceBuyOrders.totalPrice,
         globalBalance.balance,
         globalBalance.currency
       );
-      const notifDiv = spawnSumNotificationDiv(notification);
+      const notifDiv = spawnSumNotificationDiv(note, color);
       listingsContainer.insertBefore(notifDiv, listing);
     }
   });

@@ -55,11 +55,11 @@ const fetchHistoryHandler = (e: Event, historyElement: HTMLElement) => {
   });
 };
 
-const appendChangesToHistory = async (historyElement: HTMLElement | null) => {
+const appendHistoryListener = async (historyElement: HTMLElement | null) => {
   if (!historyElement) return;
   document.addEventListener("FETCH_HISTORY", (e) =>
     fetchHistoryHandler(e, historyElement)
   );
 };
 
-export { appendChangesToHistory };
+export { appendHistoryListener };

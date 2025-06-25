@@ -40,8 +40,8 @@ const interceptNetworkRequests = ({
       if (match) {
         finalUrl = url.toString();
       }
-
-      return originalOpen.call(this, method, finalUrl, async!, user, password);
+      const isAsync = async ? async : true;
+      return originalOpen.call(this, method, finalUrl, isAsync, user, password);
     };
     xhr.addEventListener("load", function () {
       const match = matchIntercept(this.responseURL);

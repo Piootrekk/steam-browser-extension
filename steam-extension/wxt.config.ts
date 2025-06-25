@@ -1,15 +1,18 @@
 import { defineConfig } from "wxt";
 
-// See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: "src",
   manifestVersion: 3,
   manifest: {
-    permissions: ["webRequest", "webRequestBlocking", "<all_urls>"],
+    permissions: [
+      "webRequest",
+      "declarativeNetRequest",
+      "https://steamcommunity.com/*",
+    ],
     web_accessible_resources: [
       {
+        matches: ["https://steamcommunity.com/*"],
         resources: ["market-history-intercept.js"],
-        matches: ["<all_urls>"],
       },
     ],
   },

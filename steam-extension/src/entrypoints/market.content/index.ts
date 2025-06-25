@@ -1,6 +1,6 @@
 // ActListPageSize
 
-import { appendChangesToHistory } from "./history/history";
+import { appendHistoryListener } from "./history/history";
 import { appendChangesToListings } from "./listings/listings";
 import "./style.css";
 
@@ -36,29 +36,21 @@ export default defineContentScript({
     };
 
     const initValus = getTabContents();
+    await appendHistoryListener(initValus.history);
     if (initValus.listings) appendChangesToListings(initValus.listings);
-    const { history } = getTabContents();
-    await appendChangesToHistory(history);
 
-    const observer = new MutationObserver((mutationList, observer) => {
-      for (const mutation of mutationList) {
-        if (mutation.type === "childList") {
-          console.log("A child node has been added or removed.");
-        } else if (mutation.type === "attributes") {
-          console.log(`The ${mutation.attributeName} attribute was modified.`);
-        }
-      }
-      const { listings } = getTabContents();
-      mutationExecute(listings, "listings", () => {
-        appendChangesToListings(listings);
-      });
-    });
+    // const observer = new MutationObserver(() => {
+    //   const { listings } = getTabContents();
+    //   mutationExecute(listings, "listings", () => {
+    //     appendChangesToListings(listings);
+    //   });
+    // });
 
-    observer.observe(myListings, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
+    // observer.observe(myListings, {
+    //   childList: true,
+    //   subtree: true,
+    //   attributes: true,
+    // });
   },
   cssInjectionMode: "manifest",
 });

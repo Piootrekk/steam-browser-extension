@@ -12,7 +12,10 @@ export default defineConfig({
     web_accessible_resources: [
       {
         matches: ["https://steamcommunity.com/*"],
-        resources: ["market-history-intercept.js"],
+        resources: [
+          "market-history-intercept.js",
+          "market-listings-intercept.js",
+        ],
       },
     ],
   },

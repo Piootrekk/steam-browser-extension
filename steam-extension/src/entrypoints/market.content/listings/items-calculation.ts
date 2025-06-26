@@ -117,12 +117,16 @@ const getListingNotification = (
   return note;
 };
 
-const spawnSumNotificationDiv = (notification: string, color?: string) => {
+const spawnSumNotificationDiv = (
+  notification: string,
+  notificationType: "active-listings" | "buyorder",
+  priceDiff?: string
+) => {
   const divElement = document.createElement("div");
-  divElement.classList = "extension-added notification-sum";
+  divElement.classList = `extension-added notification-sum ${notificationType}`;
   divElement.textContent = notification;
   divElement.style.paddingBottom = "20px";
-  if (color) divElement.style.color = color;
+  if (priceDiff) divElement.style.color = priceDiff;
   return divElement;
 };
 
@@ -133,35 +137,66 @@ const isSummaryExist = (listingsMainContainer: HTMLElement): boolean => {
   return sumamryElements.length !== 0 ? true : false;
 };
 
+const insertIdentifyClass = (
+  listing: HTMLElement,
+  idClass: "buyorder" | "activelisting"
+) => {
+  listing.classList.add(idClass);
+};
+
 const injectSummary = (listingsContainer: HTMLElement) => {
   const activeListings = listingsContainer.querySelectorAll<HTMLElement>(
-    ".my_listing_section.market_content_block"
+    "div.my_listing_section.market_content_block"
   );
   const globalBalance = getGlobalBalance();
   if (!globalBalance) return;
   activeListings.forEach((listing) => {
     const priceListings = getListings(listing);
     if (priceListings) {
+      insertIdentifyClass(listing, "activelisting");
       const note = getListingNotification(
         priceListings.setPrice,
         priceListings.finalPrice,
         globalBalance.currency
       );
-      const notifDiv = spawnSumNotificationDiv(note);
+      const notifDiv = spawnSumNotificationDiv(note, "active-listings");
       listingsContainer.insertBefore(notifDiv, listing);
     }
     const priceBuyOrders = getBuyOrdersPrice(listing);
     if (priceBuyOrders) {
+      insertIdentifyClass(listing, "buyorder");
       const { note, color } = getBuyOrderNotification(
         priceBuyOrders.totalPrice,
         globalBalance.balance,
         globalBalance.currency
       );
-      const notifDiv = spawnSumNotificationDiv(note, color);
+      const notifDiv = spawnSumNotificationDiv(note, "buyorder", color);
       listingsContainer.insertBefore(notifDiv, listing);
     }
   });
 };
 
+const recalculateActiveListings = (listingsContainer: HTMLElement) => {
+  const summaryDivs = listingsContainer.querySelectorAll<HTMLElement>(
+    `div.extension-added.notification-sum.active-listings`
+  );
+  const containersListings = listingsContainer.querySelectorAll<HTMLElement>(
+    "div.my_listing_section.market_content_block.activelisting"
+  );
+
+  const globalBalance = getGlobalBalance();
+  if (!globalBalance) return;
+  containersListings.forEach((listing, index) => {
+    const priceListings = getListings(listing);
+    if (!priceListings) return;
+    const note = getListingNotification(
+      priceListings.setPrice,
+      priceListings.finalPrice,
+      globalBalance.currency
+    );
+    summaryDivs[index].textContent = note;
+  });
+};
+
 export { getAmountFromName, getCurrencyFromPrice, parseValueToNumber };
-export { injectSummary, isSummaryExist };
+export { injectSummary, isSummaryExist, recalculateActiveListings };

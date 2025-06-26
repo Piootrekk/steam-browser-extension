@@ -4,12 +4,13 @@ import { matchIntercept } from "./message";
 const interceptNetworkRequests = ({
   onIntercept,
   url,
+  watchedEndpoints,
 }: InterceptNetworkRequestsParams) => {
   const originalFetch = window.fetch;
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);
     const basicUrl = args[0].toString();
-    const match = matchIntercept(basicUrl);
+    const match = matchIntercept(basicUrl, watchedEndpoints);
 
     if (match && url) {
       args[0] = url;
@@ -44,7 +45,7 @@ const interceptNetworkRequests = ({
       return originalOpen.call(this, method, finalUrl, isAsync, user, password);
     };
     xhr.addEventListener("load", function () {
-      const match = matchIntercept(this.responseURL);
+      const match = matchIntercept(this.responseURL, watchedEndpoints);
       if (match && this.status === 200) {
         const cloneResponse = this.response;
         onIntercept(cloneResponse);

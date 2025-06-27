@@ -1,7 +1,7 @@
 // ActListPageSize
 
 import { appendHistoryListener } from "./history/history";
-import { appendChangesToListings } from "./listings/listings";
+import { appendListingsListener } from "./listings/listings";
 import "./style.css";
 
 export default defineContentScript({
@@ -16,10 +16,9 @@ export default defineContentScript({
         "#tabContentsMyMarketHistory"
       ),
     });
-
     const initValus = getTabContents();
     await appendHistoryListener(initValus.history);
-    if (initValus.listings) appendChangesToListings(initValus.listings);
+    if (initValus.listings) appendListingsListener(initValus.listings);
   },
   cssInjectionMode: "manifest",
 });

@@ -2,21 +2,22 @@ import { injectHiddingButtons, isHideButtonExist } from "./hidding-element";
 import {
   injectSummary,
   isSummaryExist,
-  recalculateActiveListings,
-} from "./items-calculation";
+  recalculateSummary,
+} from "./item-calculations/items-calculation";
 
-const appendChangesToListings = (listingsMainContainer: HTMLElement | null) => {
+const appendListingsListener = (listingsMainContainer: HTMLElement | null) => {
   if (!listingsMainContainer) return;
   injectHiddingButtons(listingsMainContainer);
   injectSummary(listingsMainContainer);
+
   document.addEventListener("FETCH_LISTINGS", () => {
     if (!isHideButtonExist(listingsMainContainer))
       injectHiddingButtons(listingsMainContainer);
 
     if (isSummaryExist(listingsMainContainer)) {
-      recalculateActiveListings(listingsMainContainer);
+      recalculateSummary(listingsMainContainer);
     } else injectSummary(listingsMainContainer);
   });
 };
 
-export { appendChangesToListings };
+export { appendListingsListener };

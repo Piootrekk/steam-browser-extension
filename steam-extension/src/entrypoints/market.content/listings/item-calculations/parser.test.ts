@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getAmountFromName, parseValueToNumber } from "./items-calculation";
+import { getAmountFromName, parseValueToNumber } from "./perser";
 
 describe("Value Parser to Number (parseValueToNumber)", () => {
   type TestCase = { input: string | null | undefined; expected: number };

@@ -1,7 +1,7 @@
 import { injectCalculationToActiveListings } from "./active-listings.utlis";
 import { recalculateActiveListings } from "./active-listings.utlis";
 import { getGlobalBalance } from "./global-balance.utlis";
-import { injectCalculationToBuyOrders } from "./buyorder.utlis";
+import { injectCalculationToBuyOrders } from "./buyorder.utils";
 
 const isSummaryExist = (listingsMainContainer: HTMLElement): boolean => {
   const sumamryElements = listingsMainContainer.querySelectorAll(

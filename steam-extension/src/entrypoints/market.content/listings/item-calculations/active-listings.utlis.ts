@@ -1,4 +1,3 @@
-import { getGlobalBalance } from "./global-balance.utlis";
 import {
   insertIdentifyClass,
   spawnSumNotificationDiv,

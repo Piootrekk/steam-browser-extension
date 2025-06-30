@@ -1,4 +1,4 @@
-import { MessageResponse } from "../../market-history-intercept.unlisted/intercept.types";
+import { MessageResponse } from "../../intercept-market-history.unlisted/intercept.types";
 
 const searchUrls = {
   relative: "https://steamcommunity.com/market/listings",

@@ -13,8 +13,8 @@ export default defineConfig({
       {
         matches: ["https://steamcommunity.com/*"],
         resources: [
-          "market-history-intercept.js",
-          "market-listings-intercept.js",
+          "intercept-market-history.js",
+          "intercept-market-listings.js",
         ],
       },
     ],

@@ -20,3 +20,7 @@
 .history-action-purchase {
   background-color: rgba(0, 255, 0, 0.3) !important;
 }
+
+#myListings {
+  background-color: #1b2838 !important;
+}

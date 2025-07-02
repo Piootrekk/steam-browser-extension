@@ -15,6 +15,7 @@ export default defineConfig({
         resources: [
           "intercept-market-history.js",
           "intercept-market-listings.js",
+          "intercept-market-item.js",
         ],
       },
     ],

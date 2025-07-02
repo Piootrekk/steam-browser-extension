@@ -23,7 +23,6 @@ export default defineContentScript({
   async main() {
     const searchResultDiv = getSearchResultsElement();
     if (!searchResultDiv) {
-      console.log("XDD");
       return;
     }
     const defaulInputValue = parseNumberFromHash(location.hash);

@@ -11,7 +11,6 @@ const interceptNetworkRequests = ({
     const response = await originalFetch(...args);
     const basicUrl = args[0].toString();
     const match = matchIntercept(basicUrl, watchedEndpoints);
-
     if (match && url) {
       args[0] = url;
     }

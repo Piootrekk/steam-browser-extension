@@ -5,6 +5,7 @@ export default defineContentScript({
     await Promise.all([
       injectScript("/intercept-market-history.js", { keepInDom: true }),
       injectScript("/intercept-market-listings.js", { keepInDom: true }),
+      injectScript("/intercept-market-item-history.js", { keepInDom: true }),
     ]);
   },
 });

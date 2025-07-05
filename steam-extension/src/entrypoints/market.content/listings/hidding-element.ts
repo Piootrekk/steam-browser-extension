@@ -2,7 +2,7 @@ const generateHidingButton = (element: HTMLElement) => {
   const divWrapper = document.createElement("div");
   const button = document.createElement("button");
   button.textContent = "<< HIDE >>";
-  button.classList = "extension-added hidding-button";
+  button.classList = "extension-added custom-button";
   button.setAttribute("data-hidden", "false");
   button.addEventListener("click", () => {
     const isHidden = button.getAttribute("data-hidden") === "true";
@@ -27,7 +27,7 @@ const generateHidingButton = (element: HTMLElement) => {
 
 const isHideButtonExist = (listingsMainContainer: HTMLElement): boolean => {
   const hiddingButtons = listingsMainContainer.querySelectorAll(
-    ".extension-added.hidding-button"
+    ".extension-added.custom-button"
   );
   return hiddingButtons.length !== 0 ? true : false;
 };

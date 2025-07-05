@@ -3,6 +3,7 @@
 import { appendHistoryListener } from "./history/history";
 import { appendListingsListener } from "./listings/listings";
 import "./style.css";
+import "@/styles/button.css";
 
 export default defineContentScript({
   matches: ["https://steamcommunity.com/market/"],

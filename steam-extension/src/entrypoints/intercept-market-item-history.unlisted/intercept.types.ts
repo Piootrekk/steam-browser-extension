@@ -26,4 +26,4 @@ type ItemValue = {
   label: string;
 };
 
-export type { RawResponse, SanitizedResponse };
+export type { RawResponse, SanitizedResponse, ItemValue };

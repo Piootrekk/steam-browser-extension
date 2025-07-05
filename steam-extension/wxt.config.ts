@@ -22,7 +22,7 @@ export default defineConfig({
     ],
   },
   webExt: {
-    startUrls: ["https://steamcommunity.com"],
+    startUrls: ["https://steamcommunity.com/login/home/?goto="],
     openConsole: true,
     openDevtools: true,
   },

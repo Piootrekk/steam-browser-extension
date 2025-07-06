@@ -1,28 +1,28 @@
-const generateHidingButton = (element: HTMLElement) => {
-  const divWrapper = document.createElement("div");
-  const button = document.createElement("button");
-  button.textContent = "<< HIDE >>";
-  button.classList = "extension-added custom-button";
-  button.setAttribute("data-hidden", "false");
-  button.addEventListener("click", () => {
-    const isHidden = button.getAttribute("data-hidden") === "true";
-    button.setAttribute("data-hidden", (!isHidden).toString());
-    if (!isHidden) {
-      button.textContent = "<< SHOW >>";
-      element.style.display = "none";
-      divWrapper.style.paddingBottom = "0px";
-      button.style.marginBottom = "0px";
-    } else if (isHidden) {
-      button.textContent = "<< HIDE >>";
-      element.style.display = "block";
-      divWrapper.style.paddingBottom = "0px";
-      button.style.marginBottom = "0px";
-    }
-  });
-  divWrapper.appendChild(button);
+import {
+  checkDataAttr,
+  spawnHideShowButton,
+} from "@/components/custom-event/button/hide-show-button";
+
+const adjustBaseStylesButton = (button: HTMLButtonElement) => {
   button.style.fontSize = "17px";
   button.style.fontWeight = "bold";
-  return divWrapper;
+  button.style.display = "block";
+};
+
+const adjustButtonToCurrentData = (
+  button: HTMLButtonElement,
+  element: HTMLElement
+) => {
+  const isHidden = checkDataAttr(button, "data-hidden");
+  if (isHidden) {
+    element.style.display = "none";
+    button.style.paddingBottom = "0px";
+    button.style.marginBottom = "0px";
+  } else if (!isHidden) {
+    element.style.display = "block";
+    button.style.paddingBottom = "0px";
+    button.style.marginBottom = "0px";
+  }
 };
 
 const isHideButtonExist = (listingsMainContainer: HTMLElement): boolean => {
@@ -39,7 +39,15 @@ const injectHiddingButtons = (listingsMainContainer: HTMLElement) => {
     ".my_listing_section.market_content_block"
   );
   activeListings.forEach((listing) => {
-    const button = generateHidingButton(listing);
+    const button = spawnHideShowButton(
+      "<< SHOW >>",
+      "<< HIDE >>",
+      "data-hidden",
+      "custom-button",
+      () => adjustButtonToCurrentData(button, listing)
+    );
+    adjustBaseStylesButton(button);
+    adjustButtonToCurrentData(button, listing);
     listingsMainContainer.insertBefore(button, listing);
   });
 };

@@ -8,7 +8,7 @@ const responseMapper = (resp: RawResponse): SanitizedResponse => {
       label,
     }));
   const sellOrderGraph: SanitizedResponse["sellOrderGraph"] =
-    resp.buy_order_graph.map(([price, quantity, label]) => ({
+    resp.sell_order_graph.map(([price, quantity, label]) => ({
       price: parseFloat(price),
       quantity: parseInt(quantity),
       label,

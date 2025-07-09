@@ -3,4 +3,8 @@ import { WxtVitest } from "wxt/testing";
 
 export default defineConfig({
   plugins: [WxtVitest()],
+  test: {
+    environment: "happy-dom",
+    globals: true,
+  },
 });

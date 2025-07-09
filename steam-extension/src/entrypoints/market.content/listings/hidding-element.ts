@@ -1,7 +1,7 @@
 import {
   checkDataAttr,
   spawnHideShowButton,
-} from "@/components/custom-event/button/hide-show-button";
+} from "@/components/button/hide-show-button";
 
 const adjustBaseStylesButton = (button: HTMLButtonElement) => {
   button.style.fontSize = "17px";

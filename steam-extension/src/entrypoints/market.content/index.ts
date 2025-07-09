@@ -8,12 +8,15 @@ import "@/styles/button.css";
 export default defineContentScript({
   matches: ["https://steamcommunity.com/market/"],
   async main() {
-    const myListings = document.querySelector<HTMLElement>("#myListings");
-    if (!myListings) return;
+    const allListingsContainer =
+      document.querySelector<HTMLElement>("#myListings");
+    if (!allListingsContainer) return;
 
     const getTabContents = () => ({
-      listings: myListings.querySelector<HTMLElement>("#tabContentsMyListings"),
-      history: myListings.querySelector<HTMLElement>(
+      listings: allListingsContainer.querySelector<HTMLElement>(
+        "#tabContentsMyListings"
+      ),
+      history: allListingsContainer.querySelector<HTMLElement>(
         "#tabContentsMyMarketHistory"
       ),
     });

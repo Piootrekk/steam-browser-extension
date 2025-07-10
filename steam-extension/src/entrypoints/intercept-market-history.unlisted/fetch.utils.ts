@@ -43,12 +43,15 @@ const getMappedItems = (
   ids: HoverDetailsRow[]
 ): MessageResponse[] => {
   const mappedItems = items.map((item) => {
-    return {
+    const itemObj = {
       hashName: item.market_hash_name,
       id: item.id,
       appid: item.appid,
       itemNameRow: ids.find((id) => id.itemId === item.id)?.itemNameRow,
     } satisfies MessageResponse;
+    if (itemObj.itemNameRow === undefined)
+      throw new Error("itemNameRow is undefined, invalid items mapping");
+    return itemObj;
   });
   return mappedItems;
 };
@@ -61,7 +64,6 @@ const sanitizeItemToMsg = (rawResponse: RawResponse): MessageResponse[] => {
     const itemIdObj = rawResponse.assets[appid][version];
     return getItemsFromItemIds(itemIdObj);
   });
-  console.log(items);
   const ids = getHoverDetails(rawResponse.hovers);
   const mappedItems = getMappedItems(items, ids);
   return mappedItems;

@@ -7,16 +7,19 @@ import type {
   RawResponse,
 } from "./intercept.types";
 
-const getAppIds = (rawResponse: RawResponse): string[] => {
-  return Object.keys(rawResponse.assets);
+const getAppIds = (record: Record<`${number}`, unknown>): string[] => {
+  return Object.keys(record);
 };
 
 const getFirstVersions = (asset: ApiType): string => {
   const versions = Object.keys(asset);
+  if (versions.length === 0) {
+    throw new Error("No versions found in asset");
+  }
   return versions[0];
 };
 
-const getItemsFromItemsIds = (itemId: ItemId): ItemData[] => {
+const getItemsFromItemIds = (itemId: ItemId): ItemData[] => {
   const itemIdKeys = Object.keys(itemId);
   const items = itemIdKeys.map((id) => itemId[id]);
   return items;
@@ -27,12 +30,12 @@ const getHoverDetails = (hover: string): HoverDetailsRow[] => {
     /CreateItemHoverFromContainer\(\s*g_rgAssets,\s*'(history_row_\d+_\d+_image)',\s*(\d+),\s*'2',\s*'(\d+)',\s*0\s*\);/g;
 
   const matches = [...hover.matchAll(regex)];
-
-  return matches.map(([, historyRow, gameId, itemId]) => ({
+  const mapValues = matches.map(([, historyRow, gameId, itemId]) => ({
     itemNameRow: historyRow.replace("_image", ""),
     gameId,
     itemId,
   }));
+  return mapValues;
 };
 
 const getMappedItems = (
@@ -51,15 +54,26 @@ const getMappedItems = (
 };
 
 const sanitizeItemToMsg = (rawResponse: RawResponse): MessageResponse[] => {
-  const appIds = getAppIds(rawResponse);
+  const appIds = getAppIds(rawResponse.assets);
   const items = appIds.flatMap((appid) => {
     const appidValue = rawResponse.assets[appid];
     const version = getFirstVersions(appidValue);
     const itemIdObj = rawResponse.assets[appid][version];
-    return getItemsFromItemsIds(itemIdObj);
+    return getItemsFromItemIds(itemIdObj);
   });
+  console.log(items);
   const ids = getHoverDetails(rawResponse.hovers);
-  return getMappedItems(items, ids);
+  const mappedItems = getMappedItems(items, ids);
+  return mappedItems;
 };
 
-export { sanitizeItemToMsg };
+const testExport = {
+  getAppIds,
+  getFirstVersions,
+  getItemsFromItemIds,
+  getHoverDetails,
+  getMappedItems,
+  sanitizeItemToMsg,
+};
+
+export { sanitizeItemToMsg, testExport };

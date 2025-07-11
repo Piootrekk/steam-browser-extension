@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sanitizeItemToMsg, testExport } from "./fetch.utils";
 import { emptyMockData, mockResponse } from "./fetch.utils.mock";
-import { computedStyle } from "happy-dom/lib/PropertySymbol.js";
 
 const {
   getAppIds,

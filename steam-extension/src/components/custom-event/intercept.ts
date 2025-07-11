@@ -1,7 +1,15 @@
 import { InterceptNetworkRequestsParams } from "./intercept.types";
-import { matchIntercept } from "./message";
 
 const interceptNetworkRequests = ({
+  onIntercept,
+  url,
+  watchedEndpoints,
+}: InterceptNetworkRequestsParams) => {
+  interceptDefaultFetch({ onIntercept, url, watchedEndpoints });
+  interceptXMLFetch({ onIntercept, watchedEndpoints });
+};
+
+const interceptDefaultFetch = ({
   onIntercept,
   url,
   watchedEndpoints,
@@ -21,7 +29,12 @@ const interceptNetworkRequests = ({
     }
     return response;
   };
+};
 
+const interceptXMLFetch = ({
+  onIntercept,
+  watchedEndpoints,
+}: InterceptNetworkRequestsParams) => {
   const originalXHR = window.XMLHttpRequest;
   function newXHR() {
     const xhr = new originalXHR();
@@ -55,4 +68,15 @@ const interceptNetworkRequests = ({
   window.XMLHttpRequest = newXHR as unknown as typeof XMLHttpRequest;
 };
 
-export { interceptNetworkRequests };
+const matchIntercept = (url: string, endpoints?: string[]) => {
+  if (!endpoints) return undefined;
+  return endpoints.find((endpoint) => url.includes(endpoint));
+};
+
+const testExport = {
+  matchIntercept,
+  interceptDefaultFetch,
+  interceptXMLFetch,
+};
+
+export { interceptNetworkRequests, testExport };

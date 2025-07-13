@@ -1,28 +1,27 @@
 import { InterceptNetworkRequestsParams } from "./intercept.types";
-
+// TODO change static new url to static param for example ?page=50 to override base url
 const interceptNetworkRequests = ({
   onIntercept,
-  url,
+  overrideUrl,
   watchedEndpoints,
 }: InterceptNetworkRequestsParams) => {
-  interceptDefaultFetch({ onIntercept, url, watchedEndpoints });
+  interceptDefaultFetch({ onIntercept, overrideUrl, watchedEndpoints });
   interceptXMLFetch({ onIntercept, watchedEndpoints });
 };
 
 const interceptDefaultFetch = ({
   onIntercept,
-  url,
+  overrideUrl,
   watchedEndpoints,
 }: InterceptNetworkRequestsParams) => {
   const originalFetch = window.fetch;
   window.fetch = async (...args) => {
-    const response = await originalFetch(...args);
     const basicUrl = args[0].toString();
     const match = matchIntercept(basicUrl, watchedEndpoints);
-    if (match && url) {
-      args[0] = url;
+    if (match && overrideUrl) {
+      args[0] = overrideUrl;
     }
-
+    const response = await originalFetch(...args);
     if (match && response.status === 200) {
       const cloneResponse = await response.clone().text();
       onIntercept(cloneResponse);
@@ -33,6 +32,7 @@ const interceptDefaultFetch = ({
 
 const interceptXMLFetch = ({
   onIntercept,
+  overrideUrl,
   watchedEndpoints,
 }: InterceptNetworkRequestsParams) => {
   const originalXHR = window.XMLHttpRequest;
@@ -46,15 +46,10 @@ const interceptXMLFetch = ({
       user?: string,
       password?: string
     ) {
-      const originalUrl = url.toString();
-      const match = matchIntercept(originalUrl);
+      const newUrl = overrideUrl ? overrideUrl : url.toString();
 
-      let finalUrl = originalUrl;
-      if (match) {
-        finalUrl = url.toString();
-      }
-      const isAsync = async ? async : true;
-      return originalOpen.call(this, method, finalUrl, isAsync, user, password);
+      const isAsync = async !== false;
+      return originalOpen.call(this, method, newUrl, isAsync, user, password);
     };
     xhr.addEventListener("load", function () {
       const match = matchIntercept(this.responseURL, watchedEndpoints);

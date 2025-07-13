@@ -5,7 +5,7 @@ type GlobalIntercept = {
 
 type InterceptNetworkRequestsParams = {
   onIntercept: (response: string) => void;
-  url?: string;
+  overrideUrl?: string;
   body?: Record<string, string>;
   watchedEndpoints: string[];
 };

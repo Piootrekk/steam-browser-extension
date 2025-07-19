@@ -1,9 +1,4 @@
-import { MessageResponse } from "../../intercept-market-history.unlisted/intercept.types";
-
-const searchUrls = {
-  relative: "https://steamcommunity.com/market/listings",
-  search: "https://steamcommunity.com/market/search?",
-};
+import { MessageResponse } from "./intercept.types";
 
 const setUrlToItem = (
   itemLink: string,
@@ -34,12 +29,14 @@ const setColorToAction = (actionContainer: HTMLElement | null) => {
     );
 };
 
-const fetchHistoryHandler = (e: Event, historyElement: HTMLElement) => {
+const itemDataSwapper = (e: Event, historyElement: HTMLElement) => {
   const itemNameTag = "_name";
+
+  const relativePath = "https://steamcommunity.com/market/listings";
 
   const customEvent = e as CustomEvent<MessageResponse[]>;
   customEvent.detail.forEach((det) => {
-    const url = `${searchUrls.relative}/${det.appid}/${det.hashName}`;
+    const url = `${relativePath}/${det.appid}/${det.hashName}`;
     const itemElement = historyElement.querySelector<HTMLElement>(
       `div#${det.itemNameRow}`
     );
@@ -55,11 +52,11 @@ const fetchHistoryHandler = (e: Event, historyElement: HTMLElement) => {
   });
 };
 
-const appendHistoryListener = async (historyElement: HTMLElement | null) => {
-  if (!historyElement) return;
-  document.addEventListener("FETCH_HISTORY", (e) =>
-    fetchHistoryHandler(e, historyElement)
+const getHistoryTab = () => {
+  const HistoryTab = document.querySelector<HTMLElement>(
+    "#myListings #tabContentsMyMarketHistory"
   );
+  return HistoryTab;
 };
 
-export { appendHistoryListener };
+export { itemDataSwapper, getHistoryTab };

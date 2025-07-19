@@ -1,13 +1,5 @@
-import { interceptNetworkRequests } from "@/components/custom-event/intercept";
-import { sendInterceptMessage } from "@/components/custom-event/message";
+import { setInterceptListings } from "@/content/market/listing/intercept";
 
 export default defineUnlistedScript(() => {
-  const watchedEndpoints = ["/market/mylistings"];
-  const interceptMarketListingsFetch = (_: string) => {
-    sendInterceptMessage("FETCH_LISTINGS");
-  };
-  interceptNetworkRequests({
-    onIntercept: interceptMarketListingsFetch,
-    watchedEndpoints,
-  });
+  setInterceptListings();
 });

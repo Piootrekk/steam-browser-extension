@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sendInterceptMessage } from "./message";
 
-describe(" ", () => {
+describe("sendInterceptMessage", () => {
   let eventHandler: ReturnType<typeof vi.fn>;
   const customEventName = "custom-event-test";
   beforeEach(() => {
@@ -41,7 +41,5 @@ describe(" ", () => {
     const customEvent = eventArg as CustomEvent<typeof mockBody>;
     expect(customEvent.type).toBe(customEventName);
     expect(customEvent.detail).toBe(mockBody);
-
-    console.log(eventArg.detail);
   });
 });

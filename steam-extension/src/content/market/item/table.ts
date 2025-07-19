@@ -1,4 +1,4 @@
-import { ItemValue } from "../intercept-market-item-history.unlisted/intercept.types";
+import { ItemValue } from "./intercept.types";
 
 const spawnHeaderRow = (textContent: string, align: string) => {
   const thElement = document.createElement("th");

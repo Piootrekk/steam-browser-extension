@@ -1,4 +1,4 @@
-import { getListingTab } from "./dom-query.utils";
+import { getListingTab } from "./dom-query";
 import { injectHiddingButtons, isHideButtonExist } from "./hidding-element";
 import { addCustomEventListenerListing } from "./intercept";
 import {

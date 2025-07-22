@@ -14,6 +14,11 @@ describe("Value Parser to Number (parseValueToNumber)", () => {
     { input: "2 500,50 zł", expected: 2500.5 },
     { input: "$396.63 USD", expected: 396.63 },
     { input: "invalid", expected: 0 },
+    {
+      input: `
+						15,00zł za sztukę					`,
+      expected: 15.0,
+    },
   ];
   it.each(testCases)(
     "should parse $input and return $expected",

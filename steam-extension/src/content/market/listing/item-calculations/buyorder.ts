@@ -1,7 +1,7 @@
 import {
   insertIdentifyClass,
   spawnSumNotificationDiv,
-} from "./dom-manipulations.utils";
+} from "./dom-manipulations";
 import { parseValueToNumber } from "./perser";
 
 const getBuyOrdersDivs = (listing: HTMLElement) => {

@@ -1,4 +1,4 @@
-import { getHistoryTab, itemDataSwapper } from "./dom-query.utils";
+import { getHistoryTab, itemDataSwapper } from "./dom-query";
 import { addCustomEventListenerHistory } from "./intercept";
 
 const mainHistory = () => {

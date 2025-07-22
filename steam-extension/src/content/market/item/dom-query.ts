@@ -46,8 +46,25 @@ const injectDoubeDataToTable = (e: Event) => {
   replaceTableTBody(forSaleTable, customEvent.detail.sellOrderGraph);
 };
 
+const getExistedListing = () => {
+  const listingsTab = document.querySelector<HTMLElement>(
+    "div#tabContentsMyActiveMarketListingsTable"
+  );
+  if (!listingsTab) throw new Error("Listings Tab not found");
+  const itemValueElements = listingsTab.querySelectorAll<HTMLElement>(
+    "span.market_listing_price"
+  );
+  const values = [...itemValueElements].map((element) => {
+    return element.firstChild!.firstChild!.textContent!;
+  });
+  console.log(values);
+};
+
+const getExistedBuyOrder = () => {};
+
 export {
   injectDoubeDataToTable,
   injectSingleDataToTable,
   SingleContainerContentShow,
+  getExistedListing,
 };

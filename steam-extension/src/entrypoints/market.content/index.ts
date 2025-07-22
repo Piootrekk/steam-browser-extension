@@ -5,6 +5,7 @@ import { mainHistory } from "@/content/market/history/main";
 
 export default defineContentScript({
   matches: ["https://steamcommunity.com/market/"],
+  runAt: "document_idle",
   main() {
     mainListings();
     mainHistory();

@@ -1,3 +1,4 @@
+import { parseValueToNumber } from "@/components/utils/perser";
 import { SanitizedResponse } from "./intercept.types";
 import { replaceTableTBody } from "./table";
 
@@ -18,7 +19,7 @@ const getSingleBuyOrderTable = () => {
   return buyOrderContainer;
 };
 
-const SingleContainerContentShow = () => {
+const singleContainerContentShow = () => {
   const detailShowElement = document.querySelector<HTMLDivElement>(
     "div#market_buyorder_info_show_details"
   );
@@ -35,36 +36,63 @@ const injectSingleDataToTable = (e: Event) => {
   const customEvent = e as CustomEvent<SanitizedResponse>;
   const sigleBuyOrderTable = getSingleBuyOrderTable();
   if (!sigleBuyOrderTable) return;
-  replaceTableTBody(sigleBuyOrderTable, customEvent.detail.buyOrderGraph);
+  const existingBuyOrders = getExistingBuyOrder();
+  replaceTableTBody(
+    sigleBuyOrderTable,
+    customEvent.detail.buyOrderGraph,
+    existingBuyOrders
+  );
 };
 
 const injectDoubeDataToTable = (e: Event) => {
   const customEvent = e as CustomEvent<SanitizedResponse>;
   const { forSaleTable, buyRequestTable } = getDoubleOrdersTables();
   if (!buyRequestTable || !forSaleTable) return;
-  replaceTableTBody(buyRequestTable, customEvent.detail.buyOrderGraph);
-  replaceTableTBody(forSaleTable, customEvent.detail.sellOrderGraph);
+  const existingBuyOrders = getExistingBuyOrder();
+  const existingListings = getExistingListing();
+  replaceTableTBody(
+    buyRequestTable,
+    customEvent.detail.buyOrderGraph,
+    existingBuyOrders
+  );
+  replaceTableTBody(
+    forSaleTable,
+    customEvent.detail.sellOrderGraph,
+    existingListings
+  );
 };
 
-const getExistedListing = () => {
+const getExistingListing = () => {
   const listingsTab = document.querySelector<HTMLElement>(
     "div#tabContentsMyActiveMarketListingsTable"
   );
-  if (!listingsTab) throw new Error("Listings Tab not found");
+  if (!listingsTab) return undefined;
   const itemValueElements = listingsTab.querySelectorAll<HTMLElement>(
     "span.market_listing_price"
   );
   const values = [...itemValueElements].map((element) => {
-    return element.firstChild!.firstChild!.textContent!;
+    const elValue = element.firstElementChild?.firstElementChild?.textContent!;
+    return parseValueToNumber(elValue);
   });
-  console.log(values);
+  return values;
 };
 
-const getExistedBuyOrder = () => {};
+const getExistingBuyOrder = () => {
+  const buyOrderTab = document.querySelector<HTMLElement>(
+    "div.my_listing_section.market_content_block.market_home_listing_table:not(#tabContentsMyActiveMarketListingsTable)"
+  );
+  if (!buyOrderTab) return undefined;
+  const itemValue = buyOrderTab?.querySelector<HTMLElement>(
+    "span.market_listing_price"
+  );
+  const parsedValue = parseValueToNumber(itemValue?.lastChild?.textContent);
+  return [parsedValue];
+};
 
 export {
   injectDoubeDataToTable,
   injectSingleDataToTable,
-  SingleContainerContentShow,
-  getExistedListing,
+  singleContainerContentShow,
+  getExistingListing,
+  getExistingBuyOrder,
 };

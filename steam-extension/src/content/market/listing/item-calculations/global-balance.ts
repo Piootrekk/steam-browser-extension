@@ -1,4 +1,7 @@
-import { getCurrencyFromPrice, parseValueToNumber } from "./perser";
+import {
+  getCurrencyFromPrice,
+  parseValueToNumber,
+} from "../../../../components/utils/perser";
 
 const getGlobalBalance = () => {
   const aBalanceElement = document.querySelector<HTMLAnchorElement>(

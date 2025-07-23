@@ -1,8 +1,8 @@
+import { parseValueToNumber } from "@/components/utils/perser";
 import {
   insertIdentifyClass,
   spawnSumNotificationDiv,
 } from "./dom-manipulations";
-import { parseValueToNumber } from "./perser";
 
 const getBuyOrdersDivs = (listing: HTMLElement) => {
   return listing.querySelectorAll<HTMLElement>('div[id^="mybuyorder_"]');

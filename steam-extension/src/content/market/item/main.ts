@@ -1,14 +1,12 @@
 import {
-  getExistedListing,
   injectDoubeDataToTable,
   injectSingleDataToTable,
-  SingleContainerContentShow,
+  singleContainerContentShow,
 } from "./dom-query";
 import { addCustomEventListenerHistogram } from "./intercept";
 
 const mainItem = () => {
-  SingleContainerContentShow();
-  getExistedListing();
+  singleContainerContentShow();
   addCustomEventListenerHistogram((e) => {
     injectSingleDataToTable(e);
     injectDoubeDataToTable(e);

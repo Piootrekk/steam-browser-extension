@@ -2,7 +2,10 @@ import {
   insertIdentifyClass,
   spawnSumNotificationDiv,
 } from "./dom-manipulations";
-import { getAmountFromName, parseValueToNumber } from "./perser";
+import {
+  getAmountFromName,
+  parseValueToNumber,
+} from "../../../../components/utils/perser";
 
 const getMyListingsDivs = (listing: HTMLElement) => {
   return listing.querySelectorAll<HTMLElement>('div[id^="mylisting_"]');
